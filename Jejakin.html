@@ -1,0 +1,1749 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Jejakin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: isian di kiri (profil, rute, moda, asumsi), hasil di kanan, satu kolom di ponsel. Warna: hijau toska udara pegunungan. */
+:root {
+  --bg: #edf2f1;
+  --surface: #ffffff;
+  --ink: #11272b;
+  --muted: #4f6569;
+  --line: #cbd9d8;
+  --accent: #0b7a75;
+  --accent-soft: #d5ece9;
+  --bar: #9db3b3;
+  --good: #0b7a75;
+  --bad: #a64b16;
+  --warn-bg: #f6e6d9;
+  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-data: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1819; --surface: #142324; --ink: #e3efee; --muted: #9bb1b2; --line: #294042;
+    --accent: #47c9be; --accent-soft: #17403f; --bar: #4b6767; --good: #47c9be; --bad: #e8935a; --warn-bg: #3a2a1d;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1819; --surface: #142324; --ink: #e3efee; --muted: #9bb1b2; --line: #294042;
+  --accent: #47c9be; --accent-soft: #17403f; --bar: #4b6767; --good: #47c9be; --bad: #e8935a; --warn-bg: #3a2a1d;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; padding-inline: 16px; margin: 0; }
+.wrap { max-width: 1120px; margin-inline: auto; padding-block: 28px 48px; display: flex; flex-direction: column; gap: 24px; }
+.kicker { font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 5.4vw, 3.3rem); line-height: 1.06; margin: 0 0 12px; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; margin: 0 0 12px; text-wrap: balance; }
+h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; margin: 0 0 10px; }
+.lede { max-width: 64ch; color: var(--muted); margin: 0; }
+.grid { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .grid { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); align-items: start; } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; min-width: 0; }
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field > label, .legend, .lab { font-weight: 600; font-size: 0.9rem; }
+.lab { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.hint { color: var(--muted); font-size: 0.82rem; margin: 0; }
+input[type="number"], input[type="text"], select {
+  font: inherit; color: var(--ink); background: var(--bg);
+  border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px; width: 100%; min-width: 0;
+}
+input[type="number"] { font-family: var(--font-data); }
+input:focus-visible, select:focus-visible, summary:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.check { display: flex; gap: 10px; align-items: center; margin-bottom: 14px; }
+.check input { width: 18px; height: 18px; accent-color: var(--accent); }
+fieldset { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
+.modes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
+.mode { position: relative; }
+.mode input { position: absolute; opacity: 0; inset: 0; cursor: pointer; width: 100%; height: 100%; margin: 0; }
+.mode span { display: block; border: 1px solid var(--line); border-radius: 6px; padding: 9px 10px; font-size: 0.88rem; line-height: 1.3; height: 100%; background: var(--bg); }
+.mode input:checked + span { border-color: var(--accent); background: var(--accent-soft); font-weight: 600; box-shadow: inset 0 0 0 1px var(--accent); }
+.mode input:focus-visible + span { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sec { border-top: 1px solid var(--line); padding-top: 16px; margin-top: 16px; }
+.sec:first-of-type { border-top: 0; padding-top: 0; margin-top: 0; }
+.rcard { border: 1px solid var(--line); border-radius: 8px; padding: 12px; margin-bottom: 12px; background: var(--bg); }
+.rhead { display: flex; gap: 8px; margin-bottom: 10px; }
+.rhead input { font-weight: 600; background: var(--surface); }
+.trip3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.trip3 .lab { font-size: 0.78rem; font-weight: 500; color: var(--muted); }
+.trip3 input { background: var(--surface); }
+.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); font-weight: 500; font-size: 0.82rem; padding: 6px 10px; white-space: nowrap; }
+.ghost.add { color: var(--accent); border-color: var(--accent); font-weight: 600; width: 100%; padding: 9px 12px; }
+.maps-link { display: inline-block; text-decoration: none; font-weight: 600; font-size: 0.88rem; color: var(--accent); border: 1px solid var(--accent); border-radius: 6px; padding: 7px 12px; background: var(--surface); margin-top: 4px; }
+.maps-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+details { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 16px; }
+summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; }
+.assume { display: grid; gap: 4px; margin-top: 12px; }
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.sub { font-family: var(--font-data); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 8px 0 8px; }
+.example-tag { display: inline-block; font-family: var(--font-data); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; margin-bottom: 14px; }
+.headline-label { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.big { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 9vw, 4rem); line-height: 1; margin: 6px 0 4px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.big small { font-family: var(--font-body); font-weight: 500; font-size: 1rem; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 12px 0 0; padding: 0; font-size: 0.9rem; color: var(--muted); }
+.facts div { display: flex; gap: 6px; }
+.facts dt { margin: 0; }
+.facts dd { margin: 0; font-family: var(--font-data); color: var(--ink); font-variant-numeric: tabular-nums; }
+.insight { margin: 16px 0 0; padding: 12px 14px; background: var(--accent-soft); border-radius: 6px; font-size: 0.95rem; }
+.caution { margin: 14px 0 0; padding: 10px 12px; background: var(--warn-bg); border-radius: 6px; font-size: 0.86rem; }
+.bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
+.bars li { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.row-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
+.row-top strong { font-weight: 600; }
+.row-top .val { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
+.track { height: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
+.fill { height: 100%; background: var(--bar); width: 0; transition: width 0.35s ease; }
+.fill.me { background: var(--accent); }
+.row-bot { display: flex; justify-content: space-between; gap: 4px 12px; flex-wrap: wrap; font-size: 0.84rem; color: var(--muted); }
+.row-bot .better { color: var(--good); font-weight: 600; }
+.row-bot .worse { color: var(--bad); font-weight: 600; }
+.badge { font-family: var(--font-data); font-size: 0.7rem; letter-spacing: 0.06em; text-transform: uppercase; background: var(--accent); color: var(--surface); border-radius: 3px; padding: 1px 6px; margin-left: 8px; }
+.scroll { overflow-x: auto; }
+table.wide { min-width: 640px; }
+td.txt { font-family: var(--font-body); text-align: left; vertical-align: top; }
+table { border-collapse: collapse; width: 100%; min-width: 480px; font-size: 0.9rem; }
+th, td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+th:first-child, td:first-child { text-align: left; }
+td { font-family: var(--font-data); }
+td:first-child { font-family: var(--font-body); }
+th { font-weight: 600; font-size: 0.76rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+.cat { font-family: var(--font-body); font-weight: 600; }
+.stack { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
+.head-row { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.head-row h2 { margin: 0; }
+.head-row .lab { font-size: 0.8rem; font-weight: 500; color: var(--muted); min-width: 150px; }
+.actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
+button { font: inherit; font-weight: 600; background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 9px 14px; cursor: pointer; }
+button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+button.ghost.add { color: var(--accent); border-color: var(--accent); }
+#status { font-size: 0.85rem; color: var(--muted); }
+#summary { margin: 0; padding: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; font-size: 0.9rem; overflow-wrap: anywhere; }
+.notes p, .notes li { max-width: 74ch; font-size: 0.92rem; }
+.notes ol, .notes ul { padding-left: 1.2rem; margin: 0 0 12px; display: flex; flex-direction: column; gap: 6px; }
+.notes a { color: var(--accent); overflow-wrap: anywhere; }
+.privacy { font-size: 0.85rem; color: var(--muted); margin: 0; }
+@media (prefers-reduced-motion: reduce) { .fill { transition: none; } }
+
+/* Preset buttons, embedded map, and cost comparison styles */
+.preset-wrap { margin-top: 8px; }
+.presets-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 5px; }
+.preset-btn {
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border: 1px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.preset-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.preset-btn.active {
+  background: var(--accent);
+  color: var(--surface);
+  border-color: var(--accent);
+}
+.price-presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.price-btn {
+  font-family: var(--font-data);
+  font-size: 0.76rem;
+  padding: 4px 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--muted);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.price-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.map-box {
+  margin: 10px 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--bg);
+}
+.map-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 7px 10px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.map-frame-wrap {
+  width: 100%;
+  height: 220px;
+  position: relative;
+}
+.map-frame-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+.cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.cost-table th, .cost-table td {
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--line);
+}
+.cost-table tr.highlight-me {
+  background: var(--accent-soft);
+  font-weight: 600;
+}
+.badge-eco {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  background: var(--accent);
+  color: var(--surface);
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-left: 6px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+.badge-save {
+  font-family: var(--font-data);
+  font-size: 0.68rem;
+  background: #1e7e34;
+  color: #fff;
+  padding: 1px 5px;
+  border-radius: 3px;
+  display: inline-block;
+  text-transform: uppercase;
+}
+.time-detail {
+  font-size: 0.83rem;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 3px;
+}
+.time-badge {
+  font-family: var(--font-data);
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  padding: 1px 6px;
+  border-radius: 4px;
+}
+
+/* Google Maps Native Navigation Widget & Cards */
+.gmaps-widget {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+.gmaps-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.8rem;
+  background: var(--bg);
+  color: var(--muted);
+}
+.gmaps-top-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--accent);
+  text-decoration: none;
+  font-weight: 500;
+  cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+.gmaps-top-link:hover {
+  text-decoration: underline;
+}
+.gmaps-list {
+  display: flex;
+  flex-direction: column;
+}
+.gmaps-card {
+  display: flex;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s ease;
+  background: var(--surface);
+  text-align: left;
+  border-left: 4px solid transparent;
+}
+.gmaps-card:last-child {
+  border-bottom: none;
+}
+.gmaps-card:hover {
+  background: var(--bg);
+}
+.gmaps-card.selected {
+  background: var(--accent-soft);
+  border-left-color: var(--accent);
+}
+.gmaps-icon-col {
+  width: 34px;
+  font-size: 1.25rem;
+  padding-top: 2px;
+  display: flex;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+.gmaps-info-col {
+  flex: 1;
+  min-width: 0;
+  padding-right: 12px;
+}
+.gmaps-title {
+  font-weight: 600;
+  font-size: 0.94rem;
+  color: var(--ink);
+  margin-bottom: 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.gmaps-sub {
+  font-size: 0.79rem;
+  color: var(--muted);
+  line-height: 1.35;
+}
+.gmaps-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.gmaps-pill-btn {
+  background: var(--surface);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 16px;
+  padding: 3px 12px;
+  font-size: 0.76rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.gmaps-pill-btn:hover {
+  background: var(--accent);
+  color: var(--surface);
+}
+.gmaps-text-btn {
+  background: transparent;
+  color: var(--muted);
+  border: none;
+  font-size: 0.76rem;
+  font-weight: 500;
+  padding: 3px 8px;
+  cursor: pointer;
+}
+.gmaps-text-btn:hover {
+  color: var(--ink);
+  text-decoration: underline;
+}
+.gmaps-stats-col {
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.gmaps-time {
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #c5221f;
+  font-family: var(--font-data);
+}
+.gmaps-time.normal {
+  color: #b05000;
+}
+.gmaps-time.fast {
+  color: #188038;
+}
+.gmaps-dist {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 2px;
+  font-family: var(--font-data);
+}
+.gmaps-transit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #137333;
+  color: #ffffff;
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+}
+</style>
+
+<main class="wrap">
+  <header>
+    <p class="kicker">Jejakin · emisi dan waktu di jalan</p>
+    <h1>Jejakin perjalananmu ke kampus</h1>
+    <p class="lede">Bandingkan rute dan moda dari rumah ke UPI. Jejakin menghitung kecepatan, tundaan macet, emisi CO₂ per perjalanan dan per tahun, serta indikator paparan berdasarkan lamanya kamu berada di jalan. Semua angka asumsi bisa kamu cek dan ubah.</p>
+  </header>
+
+  <div class="grid">
+    <section class="panel inputs" aria-label="Isian perjalanan">
+      <span class="example-tag">Nilai awal adalah contoh</span>
+
+      <div class="sec">
+        <h3>1. Profil komuter</h3>
+        <div class="field">
+          <label for="origin">Wilayah asal (kelurahan atau kecamatan)</label>
+          <input id="origin" type="text" placeholder="mis. Sukajadi atau Cibiru" autocomplete="off" value="Sukajadi, Kota Bandung">
+          <div class="preset-wrap">
+            <span class="sub" style="margin:6px 0 2px;display:block">Pilihan Cepat Rute Riil Komuter UPI:</span>
+            <div class="presets-row">
+              <button type="button" class="preset-btn active" data-preset="sukajadi">Sukajadi</button>
+              <button type="button" class="preset-btn" data-preset="cibiru">Cibiru</button>
+              <button type="button" class="preset-btn" data-preset="cimahi">Cimahi</button>
+              <button type="button" class="preset-btn" data-preset="kopo">Kopo</button>
+              <button type="button" class="preset-btn" data-preset="buahbatu">Buahbatu</button>
+              <button type="button" class="preset-btn" data-preset="dago">Dago</button>
+            </div>
+          </div>
+        </div>
+        <div class="pair">
+          <div class="field"><label for="days">Hari ke kampus per minggu</label><input id="days" type="number" min="1" max="7" step="1" value="5" inputmode="numeric"></div>
+          <div class="field"><label for="weeks">Minggu efektif per tahun</label><input id="weeks" type="number" min="1" max="52" step="1" value="52" inputmode="numeric"></div>
+        </div>
+        <p class="hint" style="margin-bottom:12px">Nilai 52 hanya nilai awal. Ganti sesuai kalender akademik UPI.</p>
+        <div class="check">
+          <input id="rt" type="checkbox" checked>
+          <label for="rt">Pulang pergi</label>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="head-row" style="margin-bottom:6px">
+          <h3>2. Rute dan waktu tempuh (Google Maps)</h3>
+          <button type="button" class="ghost" id="toggle-map-btn" style="font-size:0.8rem;padding:4px 9px;">Peta Rute</button>
+        </div>
+        <p class="hint" style="margin-bottom:10px">Opsi rute langsung terintegrasi Google Maps. Klik kartu opsi rute di bawah untuk memilih rute &amp; moda:</p>
+        
+        <!-- Live Map Container -->
+        <div id="map-box" class="map-box" hidden>
+          <div class="map-header">
+            <span id="map-title">Peta Koridor Menuju Kampus UPI Setiabudhi</span>
+            <span class="hint" style="font-size:0.75rem">OpenStreetMap Interaktif</span>
+          </div>
+          <div class="map-frame-wrap">
+            <iframe id="map-frame" src="https://www.openstreetmap.org/export/embed.html?bbox=107.56%2C-6.92%2C107.64%2C-6.84&layer=mapnik&marker=-6.8604%2C107.5899" loading="lazy"></iframe>
+          </div>
+        </div>
+
+        <!-- Google Maps Native Route Cards Widget -->
+        <div class="gmaps-widget" id="gmaps-widget">
+          <div class="gmaps-top-bar">
+            <button type="button" class="gmaps-top-link" id="gmaps-phone-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M17 1.01L7 1c-1.1 0-2 .9-2 2v18c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V3c0-1.1-.9-1.99-2-1.99zM17 19H7V5h10v14z"/></svg>Kirim rute ke ponsel
+            </button>
+            <button type="button" class="gmaps-top-link" id="gmaps-copy-link-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" style="vertical-align:-2px;margin-right:4px"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>Salin link
+            </button>
+          </div>
+          <div class="gmaps-list" id="gmaps-list">
+            <!-- Dynamic route cards injected here -->
+          </div>
+        </div>
+
+        <details id="manual-route-details">
+          <summary style="font-size:0.83rem;color:var(--muted);cursor:pointer;margin-block:6px 10px;">Buka editor rute manual (kustomisasi kilometer &amp; menit)</summary>
+          <div id="routes"></div>
+          <button type="button" class="ghost add" id="add-route" style="margin-top:8px">Tambah rute manual</button>
+        </details>
+        
+        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:8px;">
+          <a class="maps-link" id="maps" href="https://www.google.com/maps" target="_blank" rel="noopener">Buka aplikasi Google Maps ↗</a>
+          <span class="hint" id="maps-mode-hint" style="font-size:0.8rem;">(sesuai titik asal &amp; moda)</span>
+        </div>
+        <p class="hint" style="margin-top:8px"><strong>Data rute:</strong> Kartu di atas menampilkan rute tercepat, jarak tempuh, durasi macet, dan trayek angkutan umum/TMP langsung tanpa perlu buka aplikasi lain.</p>
+      </div>
+
+      <div class="sec">
+        <h3>3. Moda yang kamu pakai</h3>
+        <fieldset>
+          <legend class="legend" style="position:absolute;left:-9999px">Moda</legend>
+          <div class="modes" id="modes"></div>
+        </fieldset>
+      </div>
+
+      <details>
+        <summary>Asumsi kendaraan, bahan bakar, dan paparan</summary>
+        <div class="assume">
+          <p class="sub">Jumlah orang per kendaraan (p)</p>
+          <div class="pair">
+            <div class="field"><label for="occ-motor">Motor</label><input id="occ-motor" type="number" min="1" step="1" value="1" inputmode="numeric"></div>
+            <div class="field"><label for="occ-mobil">Mobil</label><input id="occ-mobil" type="number" min="1" step="1" value="1" inputmode="numeric"></div>
+          </div>
+          <div class="pair">
+            <div class="field"><label for="occ-bus">Penumpang bus</label><input id="occ-bus" type="number" min="1" step="1" value="20" inputmode="numeric"></div>
+            <div class="field"><label for="occ-listrik">Kendaraan listrik</label><input id="occ-listrik" type="number" min="1" step="1" value="1" inputmode="numeric"></div>
+          </div>
+          <p class="hint">Angka 20 untuk bus hanya contoh. Hasil bus sangat bergantung pada angka ini.</p>
+          <p class="sub">Konsumsi bahan bakar (η, km per liter)</p>
+          <div class="pair">
+            <div class="field"><label for="kml-motor">Motor</label><input id="kml-motor" type="number" min="0.1" step="0.1" value="35" inputmode="decimal"></div>
+            <div class="field"><label for="kml-mobil">Mobil</label><input id="kml-mobil" type="number" min="0.1" step="0.1" value="11.49" inputmode="decimal"></div>
+          </div>
+          <div class="field"><label for="kml-bus">Bus</label><input id="kml-bus" type="number" min="0.1" step="0.1" value="3" inputmode="decimal"></div>
+          <p class="sub">Faktor emisi bahan bakar (EF, kg CO₂ per liter)</p>
+          <div class="pair">
+            <div class="field"><label for="ef-bensin">Bensin</label><input id="ef-bensin" type="number" min="0" step="0.01" value="2.31" inputmode="decimal"></div>
+            <div class="field"><label for="ef-solar">Solar</label><input id="ef-solar" type="number" min="0" step="0.01" value="2.8" inputmode="decimal"></div>
+          </div>
+          <p class="sub">Faktor koreksi kecepatan (Kv)</p>
+          <div class="pair">
+            <div class="field"><label for="kv-motor">Motor</label><input id="kv-motor" type="number" min="0.5" step="0.05" value="1" inputmode="decimal"></div>
+            <div class="field"><label for="kv-mobil">Mobil</label><input id="kv-mobil" type="number" min="0.5" step="0.05" value="1" inputmode="decimal"></div>
+          </div>
+          <div class="field"><label for="kv-bus">Bus</label><input id="kv-bus" type="number" min="0.5" step="0.05" value="1" inputmode="decimal"></div>
+          <p class="hint">Kv = konsumsi bahan bakar nyata dibanding konsumsi nominal. Nilai 1,0 berarti tanpa koreksi, dan nilai di atas 1 berarti lebih boros karena macet. Kurva Kv terhadap kecepatan dari sumber resmi Indonesia belum ditemukan, jadi tidak diisi otomatis. Cara paling akurat adalah menghitungnya dari bahan bakar yang benar-benar kamu pakai, di bawah ini.</p>
+          <p class="sub">Hitung Kv dari bahan bakar sebenarnya (moda terpilih)</p>
+          <div class="pair">
+            <div class="field"><label for="cal-km">Jarak tercatat (km)</label><input id="cal-km" type="number" min="0" step="1" placeholder="mis. dari odometer" inputmode="decimal"></div>
+            <div class="field"><label for="cal-l">BBM terpakai (liter)</label><input id="cal-l" type="number" min="0" step="0.01" placeholder="mis. isi tangki penuh" inputmode="decimal"></div>
+          </div>
+          <p class="hint" id="cal-out" style="margin-bottom:8px">Catat dari pengisian tangki penuh ke tangki penuh berikutnya pada rute yang sama.</p>
+          <button type="button" class="ghost" id="cal-apply" hidden>Pakai Kv ini</button>
+          <p class="sub">Kendaraan listrik (belum ada nilai bawaan)</p>
+          <div class="pair">
+            <div class="field"><label for="kwh">Konsumsi (kWh per km)</label><input id="kwh" type="number" min="0" step="0.001" placeholder="isi sendiri" inputmode="decimal"></div>
+            <div class="field"><label for="ef-listrik">EF listrik (kg CO₂ per kWh)</label><input id="ef-listrik" type="number" min="0" step="0.001" placeholder="isi sendiri" inputmode="decimal"></div>
+          </div>
+          <p class="sub">Biaya bahan bakar (opsional)</p>
+          <div class="field">
+            <label for="price">Harga bahan bakar (Rp per liter)</label>
+            <input id="price" type="number" min="0" step="100" placeholder="isi harga yang kamu bayar" inputmode="numeric">
+            <div class="price-presets">
+              <button type="button" class="price-btn" data-price="10000">Pertalite Rp10.000</button>
+              <button type="button" class="price-btn" data-price="12500">Pertamax Rp12.500</button>
+              <button type="button" class="price-btn" data-price="6800">Solar Subsidi Rp6.800</button>
+            </div>
+          </div>
+          <p class="sub">Ambang kategori paparan (menit di jalan per hari)</p>
+          <div class="pair">
+            <div class="field"><label for="th-low">Rendah sampai</label><input id="th-low" type="number" min="1" step="5" value="30" inputmode="numeric"></div>
+            <div class="field"><label for="th-mid">Sedang sampai</label><input id="th-mid" type="number" min="1" step="5" value="60" inputmode="numeric"></div>
+          </div>
+          <p class="hint">Ambang ini sementara, ditetapkan tim dan belum divalidasi. Ini bukan standar WHO.</p>
+        </div>
+      </details>
+    </section>
+
+    <div class="stack">
+      <section class="panel" aria-live="polite">
+        <p class="headline-label" id="headline-label"></p>
+        <p class="big"><span id="annual">0</span><small>kg CO₂ per tahun</small></p>
+        <dl class="facts">
+          <div><dt>Per perjalanan</dt><dd id="pertrip">0</dd></div>
+          <div><dt>Per bulan</dt><dd id="monthly">0</dd></div>
+          <div><dt>Jarak setahun</dt><dd id="yearkm">0 km</dd></div>
+          <div><dt>Biaya bahan bakar per bulan</dt><dd id="cost">isi harga</dd></div>
+        </dl>
+        <p class="insight" id="insight" hidden></p>
+        <p class="caution" id="caution" hidden></p>
+      </section>
+
+      <section class="panel">
+        <h2>Perbandingan rute</h2>
+        <p class="hint" style="margin-bottom:12px">Emisi dihitung untuk moda yang kamu pilih. Kecepatan, tundaan, dan indeks kemacetan dihitung dari waktu tempuh yang kamu isi.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Rute</th><th>Km</th><th>v sibuk</th><th>Tundaan</th><th>IK</th></tr></thead>
+            <tbody id="route-table"></tbody>
+          </table>
+        </div>
+        <ul class="bars" id="route-bars" style="margin-top:18px"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="head-row">
+          <h2>Perbandingan moda</h2>
+          <label class="lab">Pada rute
+            <select id="main-route"></select>
+          </label>
+        </div>
+        <ul class="bars" id="bars"></ul>
+      </section>
+
+      <!-- Perbandingan Biaya: Kendaraan Pribadi vs Angkutan Umum Bandung -->
+      <section class="panel">
+        <div class="head-row">
+          <h2>Perbandingan Biaya &amp; Angkutan Umum Bandung</h2>
+          <span class="badge" style="background:var(--good)">Komparasi Biaya</span>
+        </div>
+        <p class="hint" style="margin-bottom:12px">Bandingkan pengeluaran bensin kendaraan pribadimu dengan tarif resmi Trans Metro Pasundan (TMP) dan Trans Metro Bandung (TMB) menuju kampus UPI.</p>
+        
+        <div class="scroll">
+          <table class="cost-table">
+            <thead>
+              <tr>
+                <th>Moda / Layanan</th>
+                <th>Per Hari (PP)</th>
+                <th>Per Bulan</th>
+                <th>1 Semester (16 mg)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="cost-compare-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="cost-callout" id="cost-saving-box" style="margin-top:14px;padding:12px 14px;background:var(--accent-soft);border-radius:6px;border-left:4px solid var(--accent);">
+          <strong id="cost-saving-title" style="display:block;margin-bottom:4px;">Analisis Finansial Komuter:</strong>
+          <span id="cost-saving-desc">...</span>
+        </div>
+
+        <p class="hint" style="margin-top:10px;font-size:0.8rem">
+          * Catatan: Tarif Trans Metro Pasundan (TMP / Teman Bus) Khusus Pelajar/Mahasiswa Rp2.000/perjalanan berlaku dengan mendaftarkan kartu uang elektronik / QRIS di aplikasi Teman Bus Kemenhub. Trans Metro Bandung (TMB) Koridor 3 melayani rute Cicaheum - Sarijadi (dekat UPI). Biaya kendaraan pribadi belum memperhitungkan tarif parkir harian di kampus UPI (sekitar Rp2.000–Rp5.000/hari) serta biaya servis berkala.
+        </p>
+      </section>
+
+      <section class="panel">
+        <h2>Indikator paparan</h2>
+        <p class="hint" style="margin-bottom:12px">Durasi di jalan per hari sama dengan waktu tempuh sibuk dikali dua jika pulang pergi. Kategori hanya memakai lamanya berada di jalan dan tidak membedakan moda. Ini indikator paparan dan bukan diagnosis.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Rute</th><th>Menit per hari</th><th>Kategori</th><th>Tundaan per minggu</th></tr></thead>
+            <tbody id="expo"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Uji sensitivitas Kv</h2>
+        <p class="hint" style="margin-bottom:12px" id="sens-hint"></p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Kv</th><th>CO₂ per perjalanan</th><th>CO₂ per tahun</th></tr></thead>
+            <tbody id="sens"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Kemungkinan dampak kesehatan dari gas buang</h2>
+        <p class="hint" style="margin-bottom:12px" id="health-hint"></p>
+        <div class="scroll">
+          <table class="wide">
+            <thead><tr><th>Paparan</th><th>Dari hasilmu</th><th>Kemungkinan efek (bukan diagnosis)</th><th>Status</th></tr></thead>
+            <tbody id="health"></tbody>
+          </table>
+        </div>
+        <p class="hint" style="margin-top:12px">Tabel ini hanya memakai emisi dari kendaraan yang kamu pilih. Kualitas udara sekitar tidak diukur, dan jumlah gram adalah emisi kendaraan, bukan dosis yang masuk ke tubuhmu. Tabel menunjukkan efek yang dikaitkan WHO dengan polutan tersebut secara umum, bukan prediksi untuk dirimu.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Polutan lokal per perjalanan</h2>
+        <p class="hint" style="margin-bottom:12px">Gram per orang untuk satu kali jalan pada rute terpilih. Nilai per kendaraan dibagi jumlah orang di dalamnya.</p>
+        <div class="scroll">
+          <table>
+            <thead><tr><th>Moda</th><th>CO</th><th>NOx</th><th>PM10</th></tr></thead>
+            <tbody id="poll"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2>Ringkasan untuk laporan</h2>
+        <p id="summary"></p>
+        <div class="actions">
+          <button type="button" id="copy">Salin ringkasan</button>
+          <span id="status" role="status"></span>
+        </div>
+        <p class="privacy" style="margin-top:14px">Perhitungan berjalan di perambanmu. Isian tidak dikirim ke server.</p>
+      </section>
+    </div>
+  </div>
+
+  <section class="panel notes">
+    <h2>Dasar perhitungan dan batasannya</h2>
+    <p>Kecepatan v = d ÷ t. Tundaan Td = t sibuk − t lengang. Indeks kemacetan IK = t sibuk ÷ t lengang. Emisi per orang per perjalanan E = (d ÷ η) × EF × Kv ÷ p. Emisi tahunan = E × 2 (jika pulang pergi) × hari per minggu × minggu efektif. Kendaraan listrik memakai d × kWh per km × EF listrik ÷ p. Biaya bulanan = (d ÷ η) × Kv × harga × 2 × hari ke kampus per bulan, dihitung per kendaraan. Ini perhitungan dari data aktivitas dan faktor emisi, bukan pengukuran langsung dari kendaraanmu.</p>
+    <ul>
+      <li>Kv dipisah per moda dan nilai awalnya 1,0. Kurva Kv terhadap kecepatan dari sumber resmi Indonesia belum ditemukan, jadi tidak ada angka yang dikarang. Kv sebaiknya dihitung dari konsumsi bahan bakar nyata (kolom kalibrasi) atau diuji lewat tabel sensitivitas. Selama Kv 1,0, waktu tempuh belum mengubah emisi dan hanya dipakai untuk kecepatan, tundaan, indeks kemacetan, dan durasi paparan.</li>
+      <li>Faktor emisi bahan bakar: bensin 2,31 kg CO₂ per liter dan solar 2,8 kg CO₂ per liter, tercantum di paparan IESR dengan rujukan ESDM dan IPCC. Dokumen asli perlu dicocokkan sebelum dipakai pada analisis akhir.</li>
+      <li>Konsumsi bahan bakar: motor 35, mobil penumpang 11,49, dan bus 3 km per liter berasal dari model nasional dalam paparan IESR. Konsumsi aktual berbeda menurut kendaraan dan kemacetan. Angka bus dari model nasional dipakai untuk bus kota. Angkot tidak dicakup karena data konsumsinya belum ditemukan dari sumber resmi.</li>
+      <li>Kendaraan listrik tidak memiliki nilai bawaan karena faktor emisi listrik terbaru dari sumber resmi belum ditetapkan.</li>
+      <li>Faktor polutan CO, NOx, PM10 berasal dari Permen LH No. 12 Tahun 2010 dan sudah lama. Dampak kesehatan tidak dihitung.</li>
+      <li>Tabel kemungkinan dampak kesehatan memakai pernyataan WHO tentang efek PM, NO₂, dan CO secara umum. Tabel tidak mengukur kualitas udara, tidak memprediksi kondisi pribadi, dan tidak mendiagnosis. Baris berkendara lama dan macet berulang adalah hipotesis penelitian. Ambang kategori paparan adalah ambang sementara tim.</li>
+      <li>Emisi pembuatan kendaraan dan emisi hulu bahan bakar tidak dihitung.</li>
+    </ul>
+    <h2>Sumber</h2>
+    <ol>
+      <li>Kementerian ESDM, <a href="https://www.esdm.go.id/assets/media/content/content-faktor-emisi-bahan-bakar-minyak-bbm-dan-batubara.pdf" target="_blank" rel="noopener">Faktor emisi bahan bakar minyak dan batubara</a>.</li>
+      <li>IESR, <a href="https://iesr.or.id/wp-content/uploads/2023/12/Slide-deck-Presenter-Diseminasi-Dekarbonisasi-Transport-5-Oktober-2023-.pdf" target="_blank" rel="noopener">Paparan Diseminasi Dekarbonisasi Transportasi, 5 Oktober 2023</a> (faktor emisi bensin dan solar, konsumsi bahan bakar).</li>
+      <li>Faktor CO, NOx, PM10 (Permen LH 12/2010), tabel dalam <a href="https://ejournal.undip.ac.id/index.php/ilmulingkungan/article/downloadSuppFile/47385/11077" target="_blank" rel="noopener">Jurnal Ilmu Lingkungan, Universitas Diponegoro</a>.</li>
+      <li>Kecepatan jam sibuk Bandung 16,3 km/jam (TomTom Traffic Index 2025), melalui <a href="https://oto.detik.com/berita/d-8318769/5-kota-termacet-di-indonesia-nomor-1-bukan-jakarta" target="_blank" rel="noopener">detikOto</a>.</li>
+      <li>World Health Organization, <a href="https://www.who.int/teams/environment-climate-change-and-health/air-quality-and-health/health-impacts/types-of-pollutants" target="_blank" rel="noopener">Types of pollutants</a> (efek PM, NO₂, CO).</li>
+      <li>World Health Organization (2021), <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank" rel="noopener">WHO global air quality guidelines</a>.</li>
+    </ol>
+  </section>
+</main>
+
+<script>
+(function () {
+  var RUSH_KMH = 16.3;
+  var MODES = [
+    { id: 'motor', name: 'Sepeda motor', fuel: 'bensin', road: true, poll: { co: 14, nox: 0.29, pm10: 0.24 } },
+    { id: 'mobil', name: 'Mobil pribadi', fuel: 'bensin', road: true, poll: { co: 32.4, nox: 2.3, pm10: 0.12 } },
+    { id: 'bus', name: 'Bus kota', fuel: 'solar', road: true, poll: { co: 11, nox: 11.9, pm10: 1.4 } },
+    { id: 'listrik', name: 'Kendaraan listrik', fuel: null, electric: true, road: true, poll: null },
+    { id: 'jalan', name: 'Jalan kaki atau sepeda', fuel: null, road: false, poll: null }
+  ];
+  var DEFAULTS = { 'occ-motor': 1, 'occ-mobil': 1, 'occ-bus': 20, 'occ-listrik': 1, 'kml-motor': 35, 'kml-mobil': 11.49, 'kml-bus': 3, 'ef-bensin': 2.31, 'ef-solar': 2.8 };
+  var EXAMPLE_ROUTES = [
+    { name: 'Rute A', d: 8, tl: 20, tb: 40 },
+    { name: 'Rute B', d: 9.5, tl: 24, tb: 38 }
+  ];
+  var MAX_ROUTES = 5;
+  var $ = function (id) { return document.getElementById(id); };
+  var nf0 = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 0 });
+  var nf1 = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 1 });
+  var nf2 = new Intl.NumberFormat('id-ID', { maximumFractionDigits: 2 });
+  function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+  var modesBox = $('modes');
+  modesBox.innerHTML = MODES.map(function (m, i) {
+    return '<label class="mode"><input type="radio" name="mode" value="' + m.id + '"' + (i === 0 ? ' checked' : '') + '><span>' + m.name + '</span></label>';
+  }).join('');
+
+  function raw(id) { var v = parseFloat($(id).value); return isFinite(v) ? v : NaN; }
+  function num(id, min, fallback) {
+    var v = raw(id);
+    if (!isFinite(v)) return fallback;
+    return Math.max(min, v);
+  }
+  function currentMode() {
+    var r = document.querySelector('input[name="mode"]:checked');
+    return r ? r.value : 'motor';
+  }
+  function modeById(id) { return MODES.filter(function (m) { return m.id === id; })[0]; }
+  function occFor(id) { return id === 'jalan' ? 1 : num('occ-' + id, 1, DEFAULTS['occ-' + id]); }
+  function kmL(id) { return num('kml-' + id, 0.1, DEFAULTS['kml-' + id]); }
+  function kv(id) { return num('kv-' + id, 0.5, 1); }
+
+  /* emisi per orang per perjalanan (kg CO2) untuk jarak d. NaN jika data belum lengkap */
+  function tripCo2(m, d) {
+    if (m.id === 'jalan') return 0;
+    if (m.electric) {
+      var kwh = raw('kwh'), efl = raw('ef-listrik');
+      if (!isFinite(kwh) || !isFinite(efl)) return NaN;
+      return d * kwh * efl / occFor(m.id);
+    }
+    return (d / kmL(m.id)) * num('ef-' + m.fuel, 0, DEFAULTS['ef-' + m.fuel]) * kv(m.id) / occFor(m.id);
+  }
+
+  /* ---- kartu rute ---- */
+  var routesBox = $('routes');
+  function routeCard(r) {
+    return '<div class="rcard">' +
+      '<div class="rhead"><input type="text" class="r-name" value="' + esc(r.name) + '" aria-label="Nama rute" maxlength="40">' +
+      '<button type="button" class="ghost r-del" aria-label="Hapus rute">Hapus</button></div>' +
+      '<div class="trip3">' +
+      '<label class="lab">Jarak (km)<input type="number" class="r-d" min="0" step="0.1" value="' + (r.d == null ? '' : r.d) + '" inputmode="decimal"></label>' +
+      '<label class="lab">Waktu lengang (mnt)<input type="number" class="r-tl" min="0" step="1" value="' + (r.tl == null ? '' : r.tl) + '" inputmode="decimal"></label>' +
+      '<label class="lab">Waktu sibuk (mnt)<input type="number" class="r-tb" min="0" step="1" value="' + (r.tb == null ? '' : r.tb) + '" inputmode="decimal"></label>' +
+      '</div></div>';
+  }
+  function addRoute(r) {
+    routesBox.insertAdjacentHTML('beforeend', routeCard(r));
+  }
+  function nextName() {
+    var n = routesBox.querySelectorAll('.rcard').length;
+    return 'Rute ' + String.fromCharCode(65 + n);
+  }
+  function syncRouteButtons() {
+    var cards = routesBox.querySelectorAll('.rcard');
+    Array.prototype.forEach.call(cards, function (c) {
+      c.querySelector('.r-del').hidden = cards.length <= 1;
+    });
+    $('add-route').hidden = cards.length >= MAX_ROUTES;
+  }
+  EXAMPLE_ROUTES.forEach(addRoute);
+  syncRouteButtons();
+
+  function readRoutes() {
+    var cards = routesBox.querySelectorAll('.rcard');
+    return Array.prototype.map.call(cards, function (c, i) {
+      var name = c.querySelector('.r-name').value.trim() || ('Rute ' + String.fromCharCode(65 + i));
+      var pf = function (sel) { var v = parseFloat(c.querySelector(sel).value); return isFinite(v) && v >= 0 ? v : NaN; };
+      var d = pf('.r-d'), tl = pf('.r-tl'), tb = pf('.r-tb');
+      var tbFallback = false;
+      if (!isFinite(d)) d = 0;
+      if (!(tb > 0)) { tb = d > 0 ? d / RUSH_KMH * 60 : 0; tbFallback = true; }
+      var v = tb > 0 ? d / (tb / 60) : NaN;
+      var td = (tl > 0) ? tb - tl : NaN;
+      var ik = (tl > 0 && tb > 0) ? tb / tl : NaN;
+      return { name: name, d: d, tl: tl, tb: tb, tbFallback: tbFallback, v: v, td: td, ik: ik };
+    });
+  }
+
+  var SVG_MOTOR = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color:var(--muted);vertical-align:middle"><path d="M19.44 9.03L15.41 5H11v2h3.59l2 2H5c-2.8 0-5 2.2-5 5s2.2 5 5 5c2.46 0 4.49-1.74 4.91-4.07.41.05.78.07 1.09.07 2.26 0 4.09-1.53 4.82-3.6l2.97 2.97c-.49.97-.79 2.06-.79 3.23 0 3.86 3.14 7 7 7s7-3.14 7-7-3.14-7-7-7c-1.34 0-2.59.38-3.65 1.03zM5 17c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm14 0c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3z"/></svg>';
+  var SVG_MOBIL = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color:var(--muted);vertical-align:middle"><path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/></svg>';
+  var SVG_BUS = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" style="color:var(--muted);vertical-align:middle"><path d="M12 2c-4.42 0-8 .5-8 4v10c0 .88.39 1.67 1 2.22V20c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h8v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1.78c.61-.55 1-1.34 1-2.22V6c0-3.5-3.58-4-8-4zm5.5 14H6.5c-.83 0-1.5-.67-1.5-1.5V11h14v3.5c0 .83-.67 1.5-1.5 1.5zm1.5-7H5V6c0-1.5 3.13-2 7-2s7 .5 7 2v3zM7.5 13c-.83 0-1.5-.67-1.5-1.5S6.67 10 7.5 10s1.5.67 1.5 1.5S8.33 13 7.5 13zm9 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>';
+
+  var PRESETS = {
+    sukajadi: {
+      origin: 'Sukajadi, Kota Bandung',
+      cards: [
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Jl. Sukajadi',
+          sub: 'Rute tercepat, meski lalu lintas normal',
+          time: 22,
+          timeClass: 'normal',
+          dist: 8.8,
+          tl: 14,
+          isTransit: false
+        },
+        {
+          mode: 'mobil',
+          icon: SVG_MOBIL,
+          route: 'lewat Jl. Sukajadi',
+          sub: 'Rute tercepat, meski lalu lintas normal',
+          time: 25,
+          timeClass: 'normal',
+          dist: 8.8,
+          tl: 15,
+          isTransit: false
+        },
+        {
+          mode: 'bus',
+          icon: SVG_BUS,
+          route: '19.05 — 19.33',
+          sub: 'Angkot / Feeder Terminal Ledeng',
+          time: 28,
+          timeClass: 'normal',
+          dist: 8.8,
+          tl: 20,
+          isTransit: true,
+          badge: 'Cicaheum - Ledeng'
+        },
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Jl. Cihampelas & Jl. Dr. Setiabudi',
+          sub: 'Rute alternatif, lalu lintas agak padat',
+          time: 28,
+          timeClass: 'normal',
+          dist: 9.4,
+          tl: 18,
+          isTransit: false
+        }
+      ],
+      routes: [
+        { name: 'lewat Jl. Sukajadi', d: 8.8, tl: 14, tb: 22 },
+        { name: 'lewat Jl. Cihampelas & Setiabudi', d: 9.4, tl: 18, tb: 28 }
+      ],
+      bbox: '107.56%2C-6.92%2C107.64%2C-6.84'
+    },
+    cibiru: {
+      origin: 'Cibiru, Kota Bandung',
+      cards: [
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Jl. AH. Nasution',
+          sub: 'Rute tercepat sepeda motor, selap-selip di kemacetan',
+          time: 50,
+          timeClass: 'normal',
+          dist: 19.7,
+          tl: 35,
+          isTransit: false
+        },
+        {
+          mode: 'mobil',
+          icon: SVG_MOBIL,
+          route: 'lewat Jl. AH. Nasution',
+          sub: 'Typically 40 min to 1 hr 15 min (jam sibuk)',
+          time: 65,
+          timeClass: '',
+          dist: 19.7,
+          tl: 38,
+          isTransit: false
+        },
+        {
+          mode: 'bus',
+          icon: SVG_BUS,
+          route: '18.45 — 20.25 (1 jam 40 mnt)',
+          sub: 'Trans Metro Pasundan Koridor 5 / Ledeng',
+          time: 100,
+          timeClass: '',
+          dist: 20.5,
+          tl: 60,
+          isTransit: true,
+          badge: 'TMP Koridor 5'
+        },
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Jl. Nasional III (ByPass)',
+          sub: 'Jarak lebih jauh, kecepatan lebih konstan',
+          time: 55,
+          timeClass: 'normal',
+          dist: 24.5,
+          tl: 42,
+          isTransit: false
+        }
+      ],
+      routes: [
+        { name: 'via Jl. AH. Nasution', d: 19.7, tl: 35, tb: 65 },
+        { name: 'via Jl. Nasional III (ByPass)', d: 24.5, tl: 42, tb: 75 }
+      ],
+      bbox: '107.55%2C-6.94%2C107.73%2C-6.84'
+    },
+    cimahi: {
+      origin: 'Cimahi, Jawa Barat',
+      cards: [
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Jl. Gn. Batu - Pasteur - Setiabudhi',
+          sub: 'Rute utama tercepat',
+          time: 35,
+          timeClass: 'normal',
+          dist: 13.5,
+          tl: 24,
+          isTransit: false
+        },
+        {
+          mode: 'mobil',
+          icon: SVG_MOBIL,
+          route: 'lewat Jl. Gn. Batu - Pasteur - Setiabudhi',
+          sub: 'Padat di persimpangan Pasteur',
+          time: 48,
+          timeClass: '',
+          dist: 13.5,
+          tl: 26,
+          isTransit: false
+        },
+        {
+          mode: 'bus',
+          icon: SVG_BUS,
+          route: '19.10 — 20.05 (55 mnt)',
+          sub: 'Angkutan Cimahi - St. Hall / Feeder Ledeng',
+          time: 55,
+          timeClass: 'normal',
+          dist: 14.0,
+          tl: 35,
+          isTransit: true,
+          badge: 'Cimahi - Ledeng'
+        }
+      ],
+      routes: [
+        { name: 'via Gn. Batu - Pasteur - Setiabudhi', d: 13.5, tl: 24, tb: 48 },
+        { name: 'via Jl. Kolonel Masturi - Lembang', d: 16.2, tl: 28, tb: 52 }
+      ],
+      bbox: '107.52%2C-6.90%2C107.61%2C-6.84'
+    },
+    kopo: {
+      origin: 'Kopo, Kota Bandung',
+      cards: [
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Pasirkaliki - Sukajadi',
+          sub: 'Rute tercepat motor',
+          time: 42,
+          timeClass: 'normal',
+          dist: 15.8,
+          tl: 28,
+          isTransit: false
+        },
+        {
+          mode: 'mobil',
+          icon: SVG_MOBIL,
+          route: 'lewat Pasirkaliki - Sukajadi',
+          sub: 'Padat merayap di Sukajadi bawah',
+          time: 58,
+          timeClass: '',
+          dist: 15.8,
+          tl: 30,
+          isTransit: false
+        },
+        {
+          mode: 'bus',
+          icon: SVG_BUS,
+          route: '19.00 — 20.15 (1 jam 15 mnt)',
+          sub: 'TMP Koridor 1 Leuwipanjang + Feeder Ledeng',
+          time: 75,
+          timeClass: '',
+          dist: 16.5,
+          tl: 45,
+          isTransit: true,
+          badge: 'TMP 1 + Feeder'
+        }
+      ],
+      routes: [
+        { name: 'via Pasirkaliki - Sukajadi', d: 15.8, tl: 28, tb: 58 }
+      ],
+      bbox: '107.56%2C-6.97%2C107.62%2C-6.84'
+    },
+    buahbatu: {
+      origin: 'Buahbatu, Kota Bandung',
+      cards: [
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Tamansari - Sukajadi',
+          sub: 'Rute tercepat motor',
+          time: 38,
+          timeClass: 'normal',
+          dist: 14.5,
+          tl: 26,
+          isTransit: false
+        },
+        {
+          mode: 'mobil',
+          icon: SVG_MOBIL,
+          route: 'lewat Tamansari - Sukajadi',
+          sub: 'Padat di sekitar Dago/Cikapayang',
+          time: 52,
+          timeClass: '',
+          dist: 14.5,
+          tl: 28,
+          isTransit: false
+        },
+        {
+          mode: 'bus',
+          icon: SVG_BUS,
+          route: '19.10 — 20.15 (1 jam 5 mnt)',
+          sub: 'Angkot Buahbatu - Dago + Feeder Ledeng',
+          time: 65,
+          timeClass: 'normal',
+          dist: 15.0,
+          tl: 40,
+          isTransit: true,
+          badge: 'Buahbatu - Ledeng'
+        }
+      ],
+      routes: [
+        { name: 'via Tamansari - Sukajadi', d: 14.5, tl: 26, tb: 52 }
+      ],
+      bbox: '107.57%2C-6.96%2C107.66%2C-6.84'
+    },
+    dago: {
+      origin: 'Dago, Kota Bandung',
+      cards: [
+        {
+          mode: 'motor',
+          icon: SVG_MOTOR,
+          route: 'lewat Jl. Ir. H. Juanda - Siliwangi',
+          sub: 'Rute terpendek dan tercepat',
+          time: 16,
+          timeClass: 'fast',
+          dist: 6.8,
+          tl: 12,
+          isTransit: false
+        },
+        {
+          mode: 'mobil',
+          icon: SVG_MOBIL,
+          route: 'lewat Jl. Ir. H. Juanda - Siliwangi',
+          sub: 'Lancar sampai Setiabudhi bawah',
+          time: 22,
+          timeClass: 'fast',
+          dist: 6.8,
+          tl: 14,
+          isTransit: false
+        },
+        {
+          mode: 'bus',
+          icon: SVG_BUS,
+          route: '19.20 — 19.45 (25 mnt)',
+          sub: 'Angkot Dago - Punclut / Ciumbuleuit',
+          time: 25,
+          timeClass: 'fast',
+          dist: 7.2,
+          tl: 18,
+          isTransit: true,
+          badge: 'Dago - Sukasari'
+        }
+      ],
+      routes: [
+        { name: 'via Jl. Ir. H. Juanda - Siliwangi', d: 6.8, tl: 14, tb: 25 }
+      ],
+      bbox: '107.57%2C-6.90%2C107.64%2C-6.84'
+    }
+  };
+
+  var activeCards = PRESETS.sukajadi.cards;
+  var activeCardIdx = 0;
+
+  function getCardsForOrigin(originText) {
+    var lower = (originText || '').toLowerCase();
+    for (var k in PRESETS) {
+      if (lower.indexOf(k) >= 0) return PRESETS[k].cards;
+    }
+    var d = 12.0;
+    return [
+      { mode: 'motor', icon: SVG_MOTOR, route: 'lewat rute tercepat arah Setiabudi', sub: 'Rute tercepat motor, selap-selip macet', time: Math.round(d / 24 * 60), timeClass: 'normal', dist: d, tl: Math.round(d / 30 * 60), isTransit: false },
+      { mode: 'mobil', icon: SVG_MOBIL, route: 'lewat rute utama arah Setiabudi', sub: 'Kecepatan rata-rata jam sibuk ~16,3 km/jam', time: Math.round(d / 16.3 * 60), timeClass: '', dist: d, tl: Math.round(d / 25 * 60), isTransit: false },
+      { mode: 'bus', icon: SVG_BUS, route: 'Jadwal Reguler', sub: 'Trans Metro Pasundan / Angkot Ledeng', time: Math.round(d / 13 * 60 + 15), timeClass: 'normal', dist: d + 1.0, tl: Math.round(d / 18 * 60 + 10), isTransit: true, badge: 'TMP / Feeder Ledeng' }
+    ];
+  }
+
+  function renderGmapsWidget(cards, selectedIndex) {
+    var box = $('gmaps-list');
+    if (!box) return;
+    if (selectedIndex === undefined) selectedIndex = activeCardIdx;
+
+    box.innerHTML = cards.map(function (c, idx) {
+      var isSelected = (idx === selectedIndex);
+      var selClass = isSelected ? ' selected' : '';
+      var timeClass = c.timeClass ? ' ' + c.timeClass : '';
+      var timeDisplay = c.time + ' mnt';
+      if (c.time >= 60) {
+        var h = Math.floor(c.time / 60);
+        var m = c.time % 60;
+        timeDisplay = h + ' jam' + (m > 0 ? ' ' + m + ' mnt' : '');
+      }
+
+      var actions = isSelected ? 
+        ('<div class="gmaps-actions">' +
+           '<button type="button" class="gmaps-pill-btn">Detail</button>' +
+           '<button type="button" class="gmaps-text-btn">Pratinjau</button>' +
+         '</div>') : '';
+
+      var transitHtml = c.isTransit && c.badge ? 
+        ('<div class="gmaps-transit-badge">' + esc(c.badge) + '</div>') : '';
+
+      return '<div class="gmaps-card' + selClass + '" data-card-idx="' + idx + '" title="Klik untuk pilih rute dan moda ini">' +
+        '<div class="gmaps-icon-col">' + c.icon + '</div>' +
+        '<div class="gmaps-info-col">' +
+          '<div class="gmaps-title">' + esc(c.route) + '</div>' +
+          '<div class="gmaps-sub">' + esc(c.sub) + '</div>' +
+          transitHtml +
+          actions +
+        '</div>' +
+        '<div class="gmaps-stats-col">' +
+          '<div class="gmaps-time' + timeClass + '">' + timeDisplay + '</div>' +
+          '<div class="gmaps-dist">' + nf1.format(c.dist) + ' km</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    box.querySelectorAll('.gmaps-card').forEach(function (cardEl) {
+      cardEl.addEventListener('click', function () {
+        var idx = parseInt(this.getAttribute('data-card-idx'), 10);
+        selectGmapsCard(cards, idx);
+      });
+    });
+  }
+
+  function selectGmapsCard(cards, idx) {
+    if (!cards || !cards[idx]) return;
+    activeCards = cards;
+    activeCardIdx = idx;
+    var c = cards[idx];
+
+    // Select mode in radio group
+    var modeRadio = document.querySelector('input[name="mode"][value="' + c.mode + '"]');
+    if (modeRadio) {
+      modeRadio.checked = true;
+    }
+
+    // Set first route in routesBox
+    var firstCard = routesBox.querySelector('.rcard');
+    if (firstCard) {
+      firstCard.querySelector('.r-name').value = c.route;
+      firstCard.querySelector('.r-d').value = c.dist;
+      firstCard.querySelector('.r-tl').value = c.tl;
+      firstCard.querySelector('.r-tb').value = c.time;
+    } else {
+      addRoute({ name: c.route, d: c.dist, tl: c.tl, tb: c.time });
+      syncRouteButtons();
+    }
+
+    renderGmapsWidget(cards, idx);
+    updateMapsLink();
+    render();
+  }
+
+  /* estimasi waktu tempuh realistis per moda berdasarkan karakteristik kemacetan jam sibuk Google Maps Bandung */
+  function estimateModeTime(modeId, d, baseTb, baseTl) {
+    if (!(d > 0)) return { txt: '-', mins: 0, note: '' };
+    
+    if (modeId === 'jalan') {
+      var walkingMins = Math.round((d / 4.5) * 60);
+      var hr = Math.floor(walkingMins / 60);
+      var min = walkingMins % 60;
+      return {
+        txt: hr > 0 ? hr + ' jam ' + min + ' mnt' : min + ' mnt',
+        mins: walkingMins,
+        note: 'kecepatan jalan 4,5 km/jam'
+      };
+    }
+
+    var cur = currentMode();
+    var refTb = (isFinite(baseTb) && baseTb > 0) ? baseTb : (d / RUSH_KMH * 60);
+    var mins = refTb;
+    var note = '';
+
+    if (modeId === 'motor') {
+      if (cur === 'motor' && isFinite(baseTb) && baseTb > 0) {
+        mins = baseTb;
+      } else if (cur === 'mobil') {
+        mins = Math.max(d / 28 * 60, Math.round(refTb * 0.78));
+      } else {
+        mins = Math.round((d / 23.5) * 60);
+      }
+      note = 'gesit selap-selip saat macet';
+    } else if (modeId === 'mobil') {
+      if (cur === 'mobil' && isFinite(baseTb) && baseTb > 0) {
+        mins = baseTb;
+      } else if (cur === 'motor') {
+        mins = Math.round(refTb * 1.28);
+      } else {
+        mins = Math.round((d / 16.3) * 60);
+      }
+      note = 'kecepatan rata-rata jam sibuk ~16,3 km/jam (TomTom)';
+    } else if (modeId === 'bus') {
+      if (cur === 'bus' && isFinite(baseTb) && baseTb > 0) {
+        mins = baseTb;
+      } else {
+        // Bus kota TMP/TMB: kecepatan operasional ~13 km/jam + 15 mnt waktu tunggu & halte
+        mins = Math.round((d / 13) * 60 + 15);
+      }
+      note = 'termasuk waktu tunggu halte & rute koridor';
+    } else if (modeId === 'listrik') {
+      mins = (cur === 'mobil') ? Math.round(refTb * 1.25) : refTb;
+      note = 'setara kendaraan bermotor sejenis';
+    }
+
+    var hr = Math.floor(mins / 60);
+    var min = Math.round(mins % 60);
+    var timeStr = hr > 0 ? hr + ' jam ' + min + ' mnt' : min + ' mnt';
+    return { txt: timeStr, mins: mins, note: note };
+  }
+
+  function updateMapsLink() {
+    var origin = $('origin').value.trim();
+    var cur = currentMode();
+    var travelMode = 'driving';
+    if (cur === 'motor') travelMode = 'two_wheeler';
+    else if (cur === 'bus') travelMode = 'transit';
+    else if (cur === 'jalan') travelMode = 'walking';
+
+    var url = 'https://www.google.com/maps/dir/?api=1&origin=' + 
+      encodeURIComponent(origin ? (origin + ', Bandung') : 'Kota Bandung') + 
+      '&destination=' + encodeURIComponent('Universitas Pendidikan Indonesia, Jl. Dr. Setiabudi No.229, Bandung') + 
+      '&travelmode=' + travelMode;
+      
+    $('maps').setAttribute('href', url);
+    var hint = $('maps-mode-hint');
+    if (hint) {
+      var modeNames = { motor: 'Sepeda Motor', mobil: 'Mobil Pribadi', bus: 'Transit Bus (TMP/TMB)', listrik: 'Kendaraan Listrik', jalan: 'Jalan Kaki' };
+      hint.textContent = '(mode ' + (modeNames[cur] || cur) + ' dari ' + (origin || 'asalmu') + ')';
+    }
+  }
+
+  function updateMapFrame(bbox) {
+    var frame = $('map-frame');
+    if (!frame) return;
+    var b = bbox || '107.54%2C-6.94%2C107.72%2C-6.84';
+    frame.src = 'https://www.openstreetmap.org/export/embed.html?bbox=' + b + '&layer=mapnik&marker=-6.8604%2C107.5899';
+  }
+
+  function fmtKg(x) { return isFinite(x) ? nf0.format(x) : 'belum lengkap'; }
+  function category(p) {
+    var lo = num('th-low', 1, 30), mid = Math.max(lo, num('th-mid', 1, 60));
+    if (p <= lo) return 'Rendah';
+    if (p <= mid) return 'Sedang';
+    return 'Tinggi';
+  }
+
+  var lastSummary = '';
+  var calKv = NaN;
+  var mainIdx = 0;
+
+  function render() {
+    var days = Math.min(7, num('days', 1, 5));
+    var weeks = Math.min(52, num('weeks', 1, 52));
+    var rt = $('rt').checked;
+    var legs = rt ? 2 : 1;
+    var cur = currentMode();
+    var curMode = modeById(cur);
+    var routes = readRoutes();
+    var filled = routes.filter(function (r) { return r.d > 0; });
+    if (filled.length) routes = filled;
+
+    /* select rute untuk perbandingan moda */
+    var sel = $('main-route');
+    if (mainIdx >= routes.length) mainIdx = 0;
+    sel.innerHTML = routes.map(function (r, i) { return '<option value="' + i + '"' + (i === mainIdx ? ' selected' : '') + '>' + esc(r.name) + '</option>'; }).join('');
+    var main = routes[mainIdx];
+
+    var annualFor = function (m, d) { return tripCo2(m, d) * legs * days * weeks; };
+
+    /* headline untuk rute terpilih dan moda terpilih */
+    var trip = tripCo2(curMode, main.d);
+    var annual = trip * legs * days * weeks;
+    var yearKm = main.d * legs * days * weeks;
+    $('headline-label').textContent = 'Emisimu dengan ' + curMode.name.toLowerCase() + ' lewat ' + main.name;
+    $('annual').textContent = isFinite(annual) ? nf0.format(annual) : 'belum lengkap';
+    $('pertrip').textContent = isFinite(trip) ? nf2.format(trip) + ' kg' : 'belum lengkap';
+    $('monthly').textContent = isFinite(annual) ? nf1.format(annual / 12) + ' kg' : 'belum lengkap';
+    $('yearkm').textContent = nf0.format(yearKm) + ' km';
+
+    var price = raw('price');
+    var costTxt = 'isi harga';
+    if (curMode.fuel && isFinite(price) && price > 0) {
+      var perDay = (main.d / kmL(cur)) * kv(cur) * price * legs;
+      var daysPerMonth = days * weeks / 12;
+      costTxt = 'Rp' + nf0.format(perDay * daysPerMonth) + ' per kendaraan';
+    } else if (!curMode.fuel) {
+      costTxt = 'tidak berlaku';
+    }
+    $('cost').textContent = costTxt;
+
+    /* insight */
+    var ins = $('insight');
+    var bus = modeById('bus');
+    var busAnnual = annualFor(bus, main.d);
+    if ((cur === 'motor' || cur === 'mobil') && isFinite(annual) && annual > 0 && busAnnual < annual) {
+      var saved = annual - busAnnual;
+      ins.textContent = 'Jika naik bus kota pada rute yang sama dan keterisian sesuai asumsi, emisimu turun sekitar ' + nf0.format(saved / annual * 100) + ' persen, atau ' + nf0.format(saved) + ' kg CO₂ per tahun.';
+      ins.hidden = false;
+    } else if (cur === 'jalan') {
+      ins.textContent = 'Berjalan kaki atau bersepeda tidak menambah emisi dari bahan bakar.';
+      ins.hidden = false;
+    } else {
+      ins.hidden = true;
+    }
+    var cau = $('caution');
+    if (cur === 'listrik' && !isFinite(trip)) {
+      cau.textContent = 'Isi konsumsi listrik (kWh per km) dan faktor emisi listrik (kg CO₂ per kWh) pada bagian asumsi. Belum ada nilai bawaan karena sumber resmi terbaru belum ditetapkan.';
+      cau.hidden = false;
+    } else if (main.tbFallback && main.d > 0) {
+      cau.textContent = 'Waktu sibuk ' + main.name + ' belum diisi, jadi dipakai kecepatan cadangan 16,3 km/jam (TomTom Traffic Index 2025). Itu rata-rata kota, bukan waktu rutemu.';
+      cau.hidden = false;
+    } else {
+      cau.hidden = true;
+    }
+
+    /* tabel dan batang perbandingan rute */
+    $('route-table').innerHTML = routes.map(function (r) {
+      return '<tr><td>' + esc(r.name) + '</td><td>' + nf1.format(r.d) + '</td><td>' + (isFinite(r.v) ? nf1.format(r.v) + ' km/jam' : '-') + (r.tbFallback && r.d > 0 ? '*' : '') + '</td><td>' +
+        (isFinite(r.td) ? nf0.format(r.td) + ' mnt' : '-') + '</td><td>' + (isFinite(r.ik) ? nf2.format(r.ik) : '-') + '</td></tr>';
+    }).join('');
+    var rAnnuals = routes.map(function (r) { return annualFor(curMode, r.d); });
+    var finite = rAnnuals.filter(function (x) { return isFinite(x); });
+    var rMax = finite.length ? Math.max.apply(null, finite) : 0;
+    var rMin = finite.length ? Math.min.apply(null, finite) : 0;
+    $('route-bars').innerHTML = routes.map(function (r, i) {
+      var a = rAnnuals[i];
+      var pct = (isFinite(a) && rMax > 0) ? a / rMax * 100 : 0;
+      var best = routes.length > 1 && finite.length > 1 && isFinite(a) && a === rMin && rMax > rMin;
+      var diff = isFinite(a) ? a - rMin : NaN;
+      var note = best ? '<span class="better">Emisi terendah</span>' : (isFinite(diff) && routes.length > 1 ? '<span class="worse">&uarr; ' + nf0.format(diff) + ' kg per tahun lebih banyak</span>' : '<span></span>');
+      return '<li><div class="row-top"><strong>' + esc(r.name) + '</strong><span class="val">' + fmtKg(a) + (isFinite(a) ? ' kg/tahun' : '') + '</span></div>' +
+        '<div class="track" aria-hidden="true"><div class="fill' + (best ? ' me' : '') + '" style="width:' + pct.toFixed(1) + '%"></div></div>' +
+        '<div class="row-bot">' + note + '<span>' + (isFinite(tripCo2(curMode, r.d)) ? nf0.format(tripCo2(curMode, r.d) * 1000) + ' g CO₂ per perjalanan' : '') + '</span></div></li>';
+    }).join('');
+
+    /* perbandingan moda pada rute terpilih */
+    var rows = MODES.map(function (m) { var t = tripCo2(m, main.d); return { m: m, trip: t, annual: t * legs * days * weeks }; });
+    var me = rows.filter(function (r) { return r.m.id === cur; })[0];
+    var vals = rows.filter(function (r) { return isFinite(r.annual); }).map(function (r) { return r.annual; });
+    var maxVal = vals.length ? Math.max.apply(null, vals) : 0;
+    $('bars').innerHTML = rows.map(function (r) {
+      var isMe = r.m.id === cur;
+      var ok = isFinite(r.annual);
+      var pct = (ok && maxVal > 0) ? (r.annual / maxVal * 100) : 0;
+      var delta;
+      if (isMe) delta = '<span>Moda yang kamu pilih</span>';
+      else if (!ok || !isFinite(me.annual)) delta = '<span>Isi data listrik di asumsi</span>';
+      else {
+        var diff = me.annual - r.annual;
+        var pctD = me.annual > 0 ? (diff / me.annual * 100) : 0;
+        if (diff > 0.5) delta = '<span class="better">&darr; Hemat ' + nf0.format(diff) + ' kg per tahun (' + nf0.format(pctD) + '%)</span>';
+        else if (diff < -0.5) delta = '<span class="worse">&uarr; Tambah ' + nf0.format(-diff) + ' kg per tahun</span>';
+        else delta = '<span>Hampir sama dengan pilihanmu</span>';
+      }
+      var estTime = estimateModeTime(r.m.id, main.d, main.tb, main.tl);
+      var rate = r.m.id === 'jalan' ? '0 g CO₂ per km' : (ok && main.d > 0 ? '&asymp; ' + nf0.format(r.trip / main.d * 1000) + ' g CO₂ per orang per km' : 'belum lengkap');
+      return '<li><div class="row-top"><strong>' + r.m.name + (isMe ? '<span class="badge">Kamu</span>' : '') + '</strong><span class="val">' + (ok ? nf0.format(r.annual) + ' kg/tahun' : 'belum lengkap') + '</span></div>' +
+        '<div class="track" aria-hidden="true"><div class="fill' + (isMe ? ' me' : '') + '" style="width:' + pct.toFixed(1) + '%"></div></div>' +
+        '<div class="row-bot">' + delta + '<span>' + rate + '</span></div>' +
+        '<div class="row-bot"><span class="time-detail">Waktu sibuk: <span class="time-badge">&asymp; ' + estTime.txt + '</span> (' + estTime.note + ')</span></div></li>';
+    }).join('');
+
+    /* perbandingan biaya bahan bakar vs angkutan umum bandung */
+    (function renderCostComparison() {
+      var tbody = $('cost-compare-tbody');
+      if (!tbody) return;
+      var price = raw('price');
+      var pVal = isFinite(price) && price > 0 ? price : 10000;
+      var priceIsCustom = isFinite(price) && price > 0;
+      var daysPerMonth = (days * weeks) / 12;
+      var daysSemester = days * 16; // 16 minggu perkuliahan efektif UPI
+
+      // Biaya pilihan pengguna saat ini
+      var myTripCost = NaN;
+      var myDayCost = NaN;
+      var myMonthCost = NaN;
+      var mySemCost = NaN;
+      
+      if (curMode.fuel) {
+        myTripCost = (main.d / kmL(cur)) * kv(cur) * pVal / occFor(cur);
+        myDayCost = myTripCost * legs;
+        myMonthCost = myDayCost * daysPerMonth;
+        mySemCost = myDayCost * daysSemester;
+      } else if (cur === 'jalan') {
+        myTripCost = 0; myDayCost = 0; myMonthCost = 0; mySemCost = 0;
+      } else if (cur === 'listrik') {
+        var kwh = raw('kwh');
+        var kwhRate = 1700; // Tarif listrik PLN nonsubsidi per kWh
+        if (isFinite(kwh) && kwh > 0) {
+          myTripCost = (main.d * kwh * kwhRate) / occFor(cur);
+          myDayCost = myTripCost * legs;
+          myMonthCost = myDayCost * daysPerMonth;
+          mySemCost = myDayCost * daysSemester;
+        }
+      }
+
+      var options = [
+        {
+          name: curMode.name + ' (Pilihanmu)',
+          isMe: true,
+          dayCost: myDayCost,
+          monthCost: myMonthCost,
+          semCost: mySemCost,
+          badge: priceIsCustom ? 'BBM Rp' + nf0.format(pVal) + '/L' : 'BBM Asumsi Rp10rb',
+          badgeClass: 'badge'
+        },
+        {
+          name: 'Trans Metro Pasundan (Tarif Khusus Mahasiswa / Pelajar)',
+          isMe: false,
+          dayCost: 2000 * legs,
+          monthCost: 2000 * legs * daysPerMonth,
+          semCost: 2000 * legs * daysSemester,
+          badge: 'Tarif Mahasiswa Rp2.000',
+          badgeClass: 'badge-save',
+          isTransit: true
+        },
+        {
+          name: 'Trans Metro Pasundan (Tarif Umum)',
+          isMe: false,
+          dayCost: 4900 * legs,
+          monthCost: 4900 * legs * daysPerMonth,
+          semCost: 4900 * legs * daysSemester,
+          badge: 'Tarif Umum TMP',
+          badgeClass: 'ghost'
+        },
+        {
+          name: 'Trans Metro Bandung / TMB (Tarif Khusus Mahasiswa)',
+          isMe: false,
+          dayCost: 2000 * legs,
+          monthCost: 2000 * legs * daysPerMonth,
+          semCost: 2000 * legs * daysSemester,
+          badge: 'Tarif Pelajar/Mhs Rp2.000',
+          badgeClass: 'badge-save',
+          isTransit: true
+        },
+        {
+          name: 'Trans Metro Bandung / TMB (Tarif Umum)',
+          isMe: false,
+          dayCost: 4000 * legs,
+          monthCost: 4000 * legs * daysPerMonth,
+          semCost: 4000 * legs * daysSemester,
+          badge: 'Tarif Umum TMB',
+          badgeClass: 'ghost'
+        }
+      ];
+
+      var fmtRp = function (n) { return isFinite(n) ? 'Rp' + nf0.format(n) : '-'; };
+
+      tbody.innerHTML = options.map(function (opt) {
+        var cls = opt.isMe ? ' class="highlight-me"' : '';
+        return '<tr' + cls + '>' +
+          '<td><strong>' + opt.name + '</strong>' + (opt.badge ? ' <span class="' + opt.badgeClass + '">' + opt.badge + '</span>' : '') + '</td>' +
+          '<td>' + fmtRp(opt.dayCost) + '</td>' +
+          '<td>' + fmtRp(opt.monthCost) + '</td>' +
+          '<td>' + fmtRp(opt.semCost) + '</td>' +
+          '<td>' + (opt.isMe ? '<span class="badge">Pilihanmu</span>' : (opt.isTransit ? '<span class="badge-save">Hemat</span>' : 'Reguler')) + '</td>' +
+          '</tr>';
+      }).join('');
+
+      var saveBox = $('cost-saving-desc');
+      if (cur === 'jalan') {
+        saveBox.innerHTML = 'Kamu menggunakan moda tanpa emisi dan <strong>0 Rupiah biaya bahan bakar</strong>! Ini adalah pilihan terbaik untuk kesehatan dan penghematan saku.';
+      } else if (isFinite(myMonthCost) && myMonthCost > 0) {
+        var tmpMhsMonth = 2000 * legs * daysPerMonth;
+        var diff = myMonthCost - tmpMhsMonth;
+        var diffSem = mySemCost - (2000 * legs * daysSemester);
+        if (diff > 0) {
+          saveBox.innerHTML = 'Jika beralih dari ' + curMode.name + ' ke <strong>Trans Metro Pasundan / TMB (Tarif Mahasiswa Rp2.000)</strong>, kamu dapat <strong>menghemat sekitar Rp' + nf0.format(diff) + ' per bulan</strong> (atau <strong>Rp' + nf0.format(diffSem) + ' per semester</strong> perkuliahan)! Estimasi ini belum memperhitungkan biaya parkir harian di kampus UPI (sekitar Rp2.000–Rp5.000/hari) serta biaya servis oli.';
+        } else {
+          saveBox.innerHTML = 'Biaya perjalananmu saat ini tergolong sangat efisien. Menggunakan angkutan umum tetap dapat dipertimbangkan saat ingin menghindari lelah berkendara macet dan memangkas polusi kota.';
+        }
+      } else {
+        saveBox.innerHTML = 'Pilih atau ketik harga bahan bakar pada asumsi di sebelah kiri untuk melihat simulasi komparasi penghematan kantong mahasiswa.';
+      }
+    })();
+
+    /* indikator paparan */
+    $('expo').innerHTML = routes.map(function (r) {
+      var p = r.tb * legs;
+      var weekDelay = isFinite(r.td) ? Math.max(0, r.td) * legs * days : NaN;
+      return '<tr><td>' + esc(r.name) + '</td><td>' + nf0.format(p) + '</td><td class="cat">' + (p > 0 ? category(p) : '-') + '</td><td>' + (isFinite(weekDelay) ? nf0.format(weekDelay) + ' mnt' : '-') + '</td></tr>';
+    }).join('');
+
+    /* polutan lokal pada rute terpilih, satu perjalanan */
+    $('poll').innerHTML = MODES.filter(function (m) { return m.poll; }).map(function (m) {
+      var occ = occFor(m.id);
+      var f = function (k) { return nf2.format(m.poll[k] * main.d / occ); };
+      return '<tr><td>' + m.name + '</td><td>' + f('co') + '</td><td>' + f('nox') + '</td><td>' + f('pm10') + '</td></tr>';
+    }).join('');
+
+    /* sensitivitas Kv */
+    (function () {
+      var tb = $('sens');
+      if (!curMode.fuel) {
+        $('sens-hint').textContent = 'Kv hanya berlaku untuk moda berbahan bakar. Pilih motor, mobil, atau bus.';
+        tb.innerHTML = '';
+        return;
+      }
+      $('sens-hint').textContent = 'Skenario matematis pada ' + main.name + ', bukan data pengukuran. Emisi naik sebanding dengan Kv, jadi tabel ini menunjukkan seberapa besar hasilmu berubah jika kendaraanmu lebih boros karena macet.';
+      var base = (main.d / kmL(cur)) * num('ef-' + curMode.fuel, 0, DEFAULTS['ef-' + curMode.fuel]) / occFor(cur);
+      var list = [1, 1.25, 1.5, 2];
+      var mine = kv(cur);
+      if (list.indexOf(mine) < 0) list.push(mine);
+      list.sort(function (a, b) { return a - b; });
+      tb.innerHTML = list.map(function (k) {
+        var t = base * k;
+        return '<tr><td>' + nf2.format(k) + (k === mine ? ' (Kv-mu)' : '') + '</td><td>' + nf0.format(t * 1000) + ' g</td><td>' + nf0.format(t * legs * days * weeks) + ' kg</td></tr>';
+      }).join('');
+    })();
+
+    /* kalibrasi Kv dari bahan bakar nyata */
+    (function () {
+      var out = $('cal-out'), btn = $('cal-apply');
+      var km = raw('cal-km'), lt = raw('cal-l');
+      calKv = NaN;
+      if (!curMode.fuel) { out.textContent = 'Kalibrasi hanya untuk moda berbahan bakar.'; btn.hidden = true; return; }
+      if (km > 0 && lt > 0) {
+        var actual = km / lt;
+        calKv = kmL(cur) / actual;
+        out.textContent = 'Konsumsi nyatamu ' + nf1.format(actual) + ' km per liter dibanding nominal ' + nf1.format(kmL(cur)) + '. Kv = ' + nf2.format(calKv) + '.';
+        btn.hidden = false;
+      } else {
+        out.textContent = 'Catat dari pengisian tangki penuh ke tangki penuh berikutnya pada rute yang sama.';
+        btn.hidden = true;
+      }
+    })();
+
+    /* kemungkinan dampak kesehatan */
+    (function () {
+      var hb = $('health');
+      var dur = main.tb * legs;
+      if (!curMode.poll) {
+        $('health-hint').textContent = curMode.id === 'jalan' ? 'Berjalan kaki atau bersepeda tidak menghasilkan gas buang kendaraan.' : 'Kendaraan listrik tidak mengeluarkan gas buang dari knalpot. Tabel emisi gas buang tidak berlaku.';
+        hb.innerHTML = '';
+        return;
+      }
+      $('health-hint').textContent = 'Berdasarkan emisi ' + curMode.name.toLowerCase() + ' pada ' + main.name + ' dan durasi di jalan sekitar ' + nf0.format(dur) + ' menit per hari.';
+      var occ = occFor(cur);
+      var g = function (k) { return nf2.format(curMode.poll[k] * main.d / occ); };
+      var T = function (a, b, c, d) { return '<tr><td class="txt"><strong>' + a + '</strong></td><td class="txt">' + b + '</td><td class="txt">' + c + '</td><td class="txt">' + d + '</td></tr>'; };
+      hb.innerHTML =
+        T('Partikulat (PM10)', g('pm10') + ' g per perjalanan', 'Partikel dapat masuk jauh ke paru-paru dan aliran darah. Paparan jangka pendek dan panjang dikaitkan dengan penyakit jantung dan paru. Paparan jangka panjang dikaitkan dengan kanker paru.', 'Dikaitkan oleh WHO') +
+        T('Nitrogen oksida (NOx, termasuk NO₂)', g('nox') + ' g per perjalanan', 'NO₂ dapat mengiritasi saluran napas dan memperparah penyakit pernapasan, serta berkaitan erat dengan asma.', 'Dikaitkan oleh WHO') +
+        T('Karbon monoksida (CO)', g('co') + ' g per perjalanan', 'CO mengganggu pengangkutan oksigen dalam darah. Gejalanya dapat berupa sesak, kelelahan, pusing, dan keluhan mirip flu, terutama pada kadar tinggi.', 'Dikaitkan oleh WHO') +
+        T('Karbon dioksida (CO₂)', nf2.format(trip) + ' kg per perjalanan', 'Dihitung untuk jejak iklim. WHO tidak membahas CO₂ sebagai polutan yang langsung merusak kesehatan pada halaman jenis polutan udara.', 'Dampak iklim') +
+        T('Berkendara lama', nf0.format(dur) + ' menit per hari', 'Kemungkinan nyeri punggung dan keluhan otot.', 'Hipotesis, diuji lewat survei keluhan') +
+        T('Macet berulang', isFinite(main.td) ? nf0.format(Math.max(0, main.td) * legs * days) + ' menit tundaan per minggu' : 'isi waktu lengang', 'Kemungkinan stres dan kelelahan.', 'Hipotesis, diuji lewat survei keluhan');
+    })();
+
+    /* ringkasan */
+    var origin = $('origin').value.trim();
+    var pMain = main.tb * legs;
+    lastSummary = 'Perjalananku ' + (origin ? 'dari ' + origin + ' ' : '') + 'ke UPI lewat ' + main.name + ', ' + nf1.format(main.d) + ' km sekali jalan, ' + days + ' hari seminggu selama ' + weeks + ' minggu' + (rt ? ', pulang pergi' : '') +
+      ', dengan ' + curMode.name.toLowerCase() + (isFinite(annual) ? ' menghasilkan sekitar ' + nf0.format(annual) + ' kg CO₂ per tahun' : ' belum bisa dihitung karena data belum lengkap') + '. ' +
+      (isFinite(main.v) ? 'Kecepatan rata-rata saat sibuk sekitar ' + nf1.format(main.v) + ' km/jam' : '') +
+      (isFinite(main.ik) ? ', indeks kemacetan ' + nf2.format(main.ik) : '') +
+      (pMain > 0 ? ', durasi di jalan sekitar ' + nf0.format(pMain) + ' menit per hari (kategori ' + category(pMain).toLowerCase() + ' menurut ambang sementara)' : '') + '. ' +
+      'Estimasi memakai faktor emisi bahan bakar ESDM dan IPCC serta konsumsi bahan bakar model nasional (IESR), dan bukan hasil pengukuran langsung. Indikator paparan bukan diagnosis.';
+    $('summary').textContent = lastSummary;
+  }
+
+  routesBox.addEventListener('input', render);
+  routesBox.addEventListener('click', function (e) {
+    var b = e.target.closest ? e.target.closest('.r-del') : null;
+    if (!b) return;
+    var card = b.closest('.rcard');
+    if (routesBox.querySelectorAll('.rcard').length > 1) {
+      card.parentNode.removeChild(card);
+      syncRouteButtons();
+      render();
+    }
+  });
+  $('add-route').addEventListener('click', function () {
+    if (routesBox.querySelectorAll('.rcard').length >= MAX_ROUTES) return;
+    addRoute({ name: nextName(), d: null, tl: null, tb: null });
+    syncRouteButtons();
+    render();
+  });
+  $('main-route').addEventListener('change', function () { mainIdx = parseInt($('main-route').value, 10) || 0; render(); });
+  $('origin').addEventListener('input', function () {
+    var cards = getCardsForOrigin(this.value.trim());
+    activeCards = cards;
+    renderGmapsWidget(cards, 0);
+    updateMapsLink();
+    render();
+  });
+
+  ['days', 'weeks', 'rt', 'occ-motor', 'occ-mobil', 'occ-bus', 'occ-listrik', 'kml-motor', 'kml-mobil', 'kml-bus', 'ef-bensin', 'ef-solar', 'kv-motor', 'kv-mobil', 'kv-bus', 'cal-km', 'cal-l', 'kwh', 'ef-listrik', 'price', 'th-low', 'th-mid'].forEach(function (id) {
+    var el = $(id);
+    if (el) {
+      el.addEventListener('input', render);
+      el.addEventListener('change', render);
+    }
+  });
+
+  modesBox.addEventListener('change', function () {
+    updateMapsLink();
+    render();
+  });
+
+  var toggleBtn = $('toggle-map-btn');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', function () {
+      var box = $('map-box');
+      if (box.hasAttribute('hidden')) {
+        box.removeAttribute('hidden');
+        this.textContent = 'Tutup Peta';
+      } else {
+        box.setAttribute('hidden', '');
+        this.textContent = 'Peta Rute';
+      }
+    });
+  }
+
+  /* Tombol Kirim ke Ponsel & Salin Link Google Maps */
+  var phoneBtn = $('gmaps-phone-btn');
+  if (phoneBtn) {
+    phoneBtn.addEventListener('click', function () {
+      window.open($('maps').getAttribute('href'), '_blank');
+    });
+  }
+
+  var copyLinkBtn = $('gmaps-copy-link-btn');
+  if (copyLinkBtn) {
+    copyLinkBtn.addEventListener('click', function () {
+      var url = $('maps').getAttribute('href');
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(function () {
+          alert('Tautan navigasi Google Maps berhasil disalin ke clipboard!');
+        });
+      } else {
+        alert('Tautan Google Maps:\n' + url);
+      }
+    });
+  }
+
+  /* Handler preset titik asal komuter UPI */
+  var presetBtns = document.querySelectorAll('.preset-btn');
+  Array.prototype.forEach.call(presetBtns, function (btn) {
+    btn.addEventListener('click', function () {
+      var key = this.getAttribute('data-preset');
+      var p = PRESETS[key];
+      if (!p) return;
+      Array.prototype.forEach.call(presetBtns, function (b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      $('origin').value = p.origin;
+      routesBox.innerHTML = '';
+      p.routes.forEach(addRoute);
+      syncRouteButtons();
+      updateMapsLink();
+      updateMapFrame(p.bbox);
+      activeCards = p.cards;
+      renderGmapsWidget(p.cards, 0);
+      selectGmapsCard(p.cards, 0);
+    });
+  });
+
+  /* Handler preset harga BBM */
+  var priceBtns = document.querySelectorAll('.price-btn');
+  Array.prototype.forEach.call(priceBtns, function (btn) {
+    btn.addEventListener('click', function () {
+      var p = this.getAttribute('data-price');
+      $('price').value = p;
+      render();
+    });
+  });
+
+  $('copy').addEventListener('click', function () {
+    var status = $('status');
+    function fallback() {
+      try {
+        var range = document.createRange();
+        range.selectNodeContents($('summary'));
+        var s = window.getSelection();
+        s.removeAllRanges();
+        s.addRange(range);
+        status.textContent = 'Teks sudah dipilih. Salin dengan Ctrl+C.';
+      } catch (e) {
+        status.textContent = 'Pilih teks di atas lalu salin secara manual.';
+      }
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(lastSummary).then(function () {
+        status.textContent = 'Ringkasan tersalin.';
+      }).catch(fallback);
+    } else {
+      fallback();
+    }
+  });
+
+  $('cal-apply').addEventListener('click', function () {
+    if (isFinite(calKv)) { $('kv-' + currentMode()).value = (Math.round(calKv * 100) / 100); render(); }
+  });
+
+  /* Inisialisasi awal dengan preset Sukajadi (persis tampilan Google Maps) */
+  routesBox.innerHTML = '';
+  PRESETS.sukajadi.routes.forEach(addRoute);
+  syncRouteButtons();
+  renderGmapsWidget(PRESETS.sukajadi.cards, 0);
+  selectGmapsCard(PRESETS.sukajadi.cards, 0);
+  updateMapsLink();
+  render();
+})();
+</script>
+
+</body></html>
