@@ -2,8 +2,47 @@
 <title>Jejakin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.cdnfonts.com">
+<link href="https://fonts.cdnfonts.com/css/apple-garamond" rel="stylesheet">
+<link href="https://fonts.cdnfonts.com/css/alte-haas-grotesk" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+@font-face {
+  font-family: 'Apple Garamond';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Apple Garamond'), local('AppleGaramond'), url('https://fonts.cdnfonts.com/s/8857/AppleGaramond.woff') format('woff');
+}
+@font-face {
+  font-family: 'Apple Garamond';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Apple Garamond Bold'), local('AppleGaramond-Bold'), url('https://fonts.cdnfonts.com/s/8857/AppleGaramond-Bold.woff') format('woff');
+}
+@font-face {
+  font-family: 'Apple Garamond';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Apple Garamond Italic'), local('AppleGaramond-Italic'), url('https://fonts.cdnfonts.com/s/8857/AppleGaramond-Italic.woff') format('woff');
+}
+@font-face {
+  font-family: 'Alte Haas Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Alte Haas Grotesk'), local('AlteHaasGroteskRegular'), url('https://fonts.cdnfonts.com/s/8581/AlteHaasGroteskRegular.woff') format('woff');
+}
+@font-face {
+  font-family: 'Alte Haas Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Alte Haas Grotesk Bold'), local('AlteHaasGroteskBold'), url('https://fonts.cdnfonts.com/s/8581/AlteHaasGroteskBold.woff') format('woff');
+}
+
 /* Layout: isian di kiri (profil, rute, moda, asumsi), hasil di kanan, satu kolom di ponsel. Warna: hijau toska udara pegunungan. */
 :root {
   --bg: #edf2f1;
@@ -17,8 +56,8 @@
   --good: #0b7a75;
   --bad: #a64b16;
   --warn-bg: #f6e6d9;
-  --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
-  --font-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --font-display: 'Apple Garamond', Garamond, 'EB Garamond', Georgia, serif;
+  --font-body: 'Alte Haas Grotesk', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-data: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) {
@@ -37,15 +76,16 @@
 body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 16px; line-height: 1.55; padding-inline: 16px; margin: 0; }
 .wrap { max-width: 1120px; margin-inline: auto; padding-block: 28px 48px; display: flex; flex-direction: column; gap: 24px; }
 .kicker { font-family: var(--font-data); font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; }
-h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 5.4vw, 3.3rem); line-height: 1.06; margin: 0 0 12px; text-wrap: balance; letter-spacing: -0.01em; }
-h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.25rem; margin: 0 0 12px; text-wrap: balance; }
-h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.02rem; margin: 0 0 10px; }
+h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.2rem, 5.8vw, 3.5rem); line-height: 1.05; margin: 0 0 12px; text-wrap: balance; letter-spacing: -0.01em; }
+h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.35rem; margin: 0 0 12px; text-wrap: balance; letter-spacing: 0.01em; }
+h3 { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; margin: 0 0 10px; }
 .lede { max-width: 64ch; color: var(--muted); margin: 0; }
 .grid { display: grid; gap: 20px; grid-template-columns: minmax(0, 1fr); }
 @media (min-width: 900px) { .grid { grid-template-columns: minmax(300px, 380px) minmax(0, 1fr); align-items: start; } }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 20px; min-width: 0; }
 .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
-.field > label, .legend, .lab { font-weight: 600; font-size: 0.9rem; }
+.field > label, .legend { font-family: var(--font-display); font-weight: 700; font-size: 0.98rem; letter-spacing: 0.01em; }
+.lab { font-weight: 600; font-size: 0.88rem; }
 .lab { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
 .hint { color: var(--muted); font-size: 0.82rem; margin: 0; }
 input[type="number"], input[type="text"], select {
@@ -76,12 +116,12 @@ fieldset { border: 0; padding: 0; margin: 0 0 14px; min-width: 0; }
 .maps-link { display: inline-block; text-decoration: none; font-weight: 600; font-size: 0.88rem; color: var(--accent); border: 1px solid var(--accent); border-radius: 6px; padding: 7px 12px; background: var(--surface); margin-top: 4px; }
 .maps-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 details { border-top: 1px solid var(--line); padding-top: 12px; margin-top: 16px; }
-summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; }
+summary { cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 0.98rem; }
 .assume { display: grid; gap: 4px; margin-top: 12px; }
 .pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .sub { font-family: var(--font-data); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); margin: 8px 0 8px; }
 .example-tag { display: inline-block; font-family: var(--font-data); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); border: 1px solid var(--line); border-radius: 4px; padding: 2px 6px; margin-bottom: 14px; }
-.headline-label { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.headline-label { font-family: var(--font-display); font-weight: 700; margin: 0; color: var(--muted); font-size: 1.02rem; }
 .big { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.6rem, 9vw, 4rem); line-height: 1; margin: 6px 0 4px; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
 .big small { font-family: var(--font-body); font-weight: 500; font-size: 1rem; letter-spacing: 0; color: var(--muted); margin-left: 8px; }
 .facts { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 12px 0 0; padding: 0; font-size: 0.9rem; color: var(--muted); }
@@ -93,7 +133,7 @@ summary { cursor: pointer; font-weight: 600; font-size: 0.92rem; }
 .bars { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 16px; }
 .bars li { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
 .row-top { display: flex; justify-content: space-between; gap: 12px; align-items: baseline; flex-wrap: wrap; }
-.row-top strong { font-weight: 600; }
+.row-top strong { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; }
 .row-top .val { font-family: var(--font-data); font-variant-numeric: tabular-nums; }
 .track { height: 12px; background: var(--bg); border: 1px solid var(--line); border-radius: 3px; overflow: hidden; }
 .fill { height: 100%; background: var(--bar); width: 0; transition: width 0.35s ease; }
@@ -110,14 +150,14 @@ th, td { text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--li
 th:first-child, td:first-child { text-align: left; }
 td { font-family: var(--font-data); }
 td:first-child { font-family: var(--font-body); }
-th { font-weight: 600; font-size: 0.76rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
+th { font-family: var(--font-display); font-weight: 700; font-size: 0.82rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); }
 .cat { font-family: var(--font-body); font-weight: 600; }
 .stack { display: flex; flex-direction: column; gap: 20px; min-width: 0; }
 .head-row { display: flex; justify-content: space-between; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
 .head-row h2 { margin: 0; }
 .head-row .lab { font-size: 0.8rem; font-weight: 500; color: var(--muted); min-width: 150px; }
 .actions { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; margin-top: 14px; }
-button { font: inherit; font-weight: 600; background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 9px 14px; cursor: pointer; }
+button { font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; background: var(--accent); color: var(--surface); border: 0; border-radius: 6px; padding: 9px 14px; cursor: pointer; letter-spacing: 0.02em; }
 button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
 button.ghost.add { color: var(--accent); border-color: var(--accent); }
 #status { font-size: 0.85rem; color: var(--muted); }
@@ -182,8 +222,9 @@ button.ghost.add { color: var(--accent); border-color: var(--accent); }
   padding: 7px 10px;
   background: var(--surface);
   border-bottom: 1px solid var(--line);
-  font-size: 0.82rem;
-  font-weight: 600;
+  font-size: 0.92rem;
+  font-family: var(--font-display);
+  font-weight: 700;
 }
 .map-frame-wrap {
   width: 100%;
@@ -323,8 +364,9 @@ button.ghost.add { color: var(--accent); border-color: var(--accent); }
   padding-right: 12px;
 }
 .gmaps-title {
-  font-weight: 600;
-  font-size: 0.94rem;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.05rem;
   color: var(--ink);
   margin-bottom: 3px;
   display: flex;
