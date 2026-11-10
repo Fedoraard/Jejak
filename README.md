@@ -69,3 +69,4 @@ Proyek ini mendukung pencapaian Sasaran Pembangunan Berkelanjutan (Sustainable D
 - **SDG 13**: Penanganan Perubahan Iklim (Target 13.3 - Peningkatan literasi dan kesadaran mitigasi emisi gas rumah kaca).
 - **SDG 7**: Energi Bersih dan Terjangkau (Target 7.3 - Efisiensi energi per kapita).
 - **SDG 9**: Industri, Inovasi, dan Infrastruktur (Target 9.5 - Rekayasa prototipe berbasis sains terintegrasi).
+
